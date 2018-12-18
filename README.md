@@ -1,4 +1,6 @@
 # SelectButtonDemo
+[![](https://jitpack.io/v/hawushuang/SelectButtonDemo.svg)](https://jitpack.io/#hawushuang/SelectButtonDemo)
+
 <br><br>
 ## 一个简单的选择按钮
 可实现两个选项的选择如性别选择、开关选择等。<br>
