@@ -8,8 +8,12 @@
         tools:context=".MainActivity">
 
     <com.aa.selectbutton.SelectButton
-            android:layout_width="60dp"
+            android:id="@+id/select_button"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            app:bg_color="@color/colorPrimaryDark"
+            app:slide_color="@color/colorAccent"
+            app:stroke_width="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

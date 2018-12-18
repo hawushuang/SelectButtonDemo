@@ -25,17 +25,28 @@ class SelectButton : View {
     private var mOverlayRadius = 0F//滑块半径
     private var cx = 0F //滑块位置
 
+    private var bg_color = Color.CYAN
+    private var stroke_color = Color.BLACK
+    private var slide_color = Color.RED
+    private var text_color = Color.WHITE
+    private var stroke_width = 5F
+
     private var misLeft = true // 当前选中tap
     private var isAnimation = false //是否正在切换
 
-    private val mText = arrayOf("男", "女")//tab 文字内容
-    private val colorRed = Color.rgb(0xff, 0x21, 0x10)
-    private val colorPurple = Color.rgb(0x88, 0x88, 0xff)
+    private var mText = arrayOf("男", "女")//tab 文字内容
     private var mOnClickListener: OnClickListener? = null
 
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SelectButton)
+        bg_color = typedArray.getColor(R.styleable.SelectButton_bg_color, Color.CYAN)
+        stroke_color = typedArray.getColor(R.styleable.SelectButton_stroke_color, Color.BLACK)
+        slide_color = typedArray.getColor(R.styleable.SelectButton_slide_color, Color.RED)
+        text_color = typedArray.getColor(R.styleable.SelectButton_text_color, Color.WHITE)
+        stroke_width = typedArray.getFloat(R.styleable.SelectButton_stroke_width, 5F)
+        typedArray.recycle()
         init()
     }
 
@@ -45,14 +56,13 @@ class SelectButton : View {
         mPaint.isAntiAlias = true //抗锯齿
 
         mTextPaint = TextPaint()
-        mTextPaint.color = Color.WHITE
-        mTextPaint.textSize = 48F
+        mTextPaint.color = text_color
         mTextPaint.typeface = Typeface.SERIF
         mTextPaint.isFakeBoldText = true
         mTextPaint.isAntiAlias = true
         mTextPaint.textAlign = Paint.Align.CENTER
 
-        mRectF = RectF(5F, 5F, 295F, 95F)
+        mRectF = RectF()
     }
 
     private lateinit var animator: ValueAnimator
@@ -62,18 +72,24 @@ class SelectButton : View {
         val arrayMeasure = getMeasure(widthMeasureSpec, heightMeasureSpec, 300, 150)
         val width = arrayMeasure[0]
         val height = width / 2
-        mTotalLeft = 5F
-        mTotalTop = 5F
-        mTotalRight = width - 5F
-        mTotalBottom = height - 5F
-        mTotalHeight = height - 10F
+        mTotalLeft = stroke_width / 2
+        mTotalTop = stroke_width / 2
+        mTotalRight = width - stroke_width / 2
+        mTotalBottom = height - stroke_width / 2
+        mTotalHeight = height - stroke_width
 
         mRectF.left = mTotalLeft
         mRectF.top = mTotalTop
         mRectF.right = mTotalRight
         mRectF.bottom = mTotalBottom
-        mOverlayRadius = (height / 2 - 10).toFloat()
-        cx = (height / 2).toFloat()
+        mOverlayRadius = (height / 2 - stroke_width)
+
+        mTextPaint.textSize = width / 4.5F
+        cx = if (misLeft) {
+            (height / 2).toFloat()
+        } else {
+            (height * 3 / 2).toFloat()
+        }
         val fontMetrics = mTextPaint.fontMetrics
         val top = fontMetrics.top//为基线到字体上边框的距离,即上图中的top
         val bottom = fontMetrics.bottom//为基线到字体下边框的距离,即上图中的bottom
@@ -96,8 +112,6 @@ class SelectButton : View {
         if (event!!.action == MotionEvent.ACTION_DOWN) {
             val position = if (event.x > width / 2) 1 else 0
             val isLeft = event.x < width / 2
-            mOnClickListener?.onClick(position, mText[position])
-
             when (position) {
                 1 -> animator = ValueAnimator.ofFloat((height / 2).toFloat(), (height * 3 / 2).toFloat())
                 0 -> animator = ValueAnimator.ofFloat((height * 3 / 2).toFloat(), (height / 2).toFloat())
@@ -132,43 +146,47 @@ class SelectButton : View {
                 return true
             }
             animator.start()
+            mOnClickListener?.onClick(position, mText[position])
             return true
         }
         return super.onTouchEvent(event)
     }
 
     private fun drawBgColor(canvas: Canvas?) {
-        mPaint.color = Color.CYAN
+        mPaint.color = bg_color
         mPaint.style = Paint.Style.FILL //实心
         canvas?.drawRoundRect(mRectF, 10000F, 10000F, mPaint)
     }
 
     private fun drawStroke(canvas: Canvas?) {
-        mPaint.strokeWidth = 5F
-        mPaint.color = Color.BLACK
+        mPaint.strokeWidth = stroke_width
+        mPaint.color = stroke_color
         mPaint.style = Paint.Style.STROKE //空心
         canvas?.drawRoundRect(mRectF, 10000F, 10000F, mPaint)
     }
 
     private fun drawOverlay(canvas: Canvas?) {
-        mPaint.color = colorRed
+        mPaint.color = slide_color
         mPaint.style = Paint.Style.FILL_AND_STROKE
         mPaint.strokeWidth = 1F
         canvas?.drawCircle(cx, (height / 2).toFloat(), mOverlayRadius, mPaint)
     }
 
     private fun drawText(canvas: Canvas?) {
-        canvas!!.drawText(mText[0], (width / 4).toFloat(), mBaseLineY, mTextPaint);
-        canvas.drawText(mText[1], (width / 4 * 3).toFloat(), mBaseLineY, mTextPaint);
+        canvas?.drawText(mText[0], (width / 4).toFloat(), mBaseLineY, mTextPaint)
+        canvas?.drawText(mText[1], (width / 4 * 3).toFloat(), mBaseLineY, mTextPaint)
     }
 
-    /*
-*
-* 添加tab切换监听
-*
-* */
     fun setOnClickListener(listener: OnClickListener?) {
         mOnClickListener = listener
+    }
+
+    fun setTexts(texts: Array<String>) {
+        mText = texts
+    }
+
+    fun setIsLeft(isLeft: Boolean) {
+        misLeft = isLeft
     }
 
     interface OnClickListener {

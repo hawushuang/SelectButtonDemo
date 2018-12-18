@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SelectButton">
+        <attr name="bg_color" format="color"/>
+        <attr name="stroke_color" format="color"/>
+        <attr name="slide_color" format="color"/>
+        <attr name="text_color" format="color"/>
+        <attr name="stroke_width" format="float"/>
+    </declare-styleable>
+</resources>
