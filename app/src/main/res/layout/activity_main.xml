@@ -18,5 +18,15 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+    <com.aa.selectbutton.SelectButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bg_color="#FF21C612"
+            app:slide_color="#FF081AE8"
+            app:stroke_width="2"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/select_button"/>
 
 </android.support.constraint.ConstraintLayout>
